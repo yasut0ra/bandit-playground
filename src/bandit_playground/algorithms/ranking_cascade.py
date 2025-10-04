@@ -37,7 +37,8 @@ class CascadeUCB1(RankingBanditAlgo):
         ranking = np.argsort(-ucb)[: self.list_size]
         return ranking.tolist()
 
-    def update(self, ranking: list[int], click_index: int | None) -> None:
+    def update(self, ranking: list[int], feedback) -> None:
+        click_index = feedback
         for pos, item in enumerate(ranking):
             self.counts[item] += 1
             if click_index is not None and pos == click_index:
@@ -69,7 +70,8 @@ class CascadeThompson(RankingBanditAlgo):
         ranking = np.argsort(-samples)[: self.list_size]
         return ranking.tolist()
 
-    def update(self, ranking: list[int], click_index: int | None) -> None:
+    def update(self, ranking: list[int], feedback) -> None:
+        click_index = feedback
         for pos, item in enumerate(ranking):
             if click_index is not None and pos == click_index:
                 self.alpha[item] += 1.0
