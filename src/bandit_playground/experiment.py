@@ -56,3 +56,26 @@ def run_contextual_bandit(
 
     out = _write_metrics(rewards, regrets, out_dir) if out_dir else None
     return rewards, regrets, out
+
+
+def run_ranking_bandit(
+    env,
+    algo,
+    steps: int,
+    seed: int | None = None,
+    out_dir: str | None = None,
+):
+    rng = np.random.default_rng(seed)
+    rewards = np.zeros(steps, dtype=float)
+    regrets = np.zeros(steps, dtype=float)
+
+    for t in range(steps):
+        _ = rng  # maintain parity with other runners
+        ranking = algo.select_ranking()
+        click_index, reward = env.step(ranking)
+        algo.update(ranking, click_index)
+        rewards[t] = reward
+        regrets[t] = env.optimal_click_prob - env.expected_click_prob(ranking)
+
+    out = _write_metrics(rewards, regrets, out_dir) if out_dir else None
+    return rewards, regrets, out
