@@ -18,5 +18,5 @@ class RankingBanditAlgo(ABC):
         """Return an ordered list of item indices to display."""
 
     @abstractmethod
-    def update(self, ranking: list[int], click_index: int | None) -> None:
-        """Update internal state given the served ranking and observed click index."""
+    def update(self, ranking: list[int], feedback) -> None:
+        """Update internal state given the served ranking and observed feedback."""
