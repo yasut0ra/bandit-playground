@@ -4,7 +4,7 @@ Reproducible sandbox for classic and contextual bandit experiments (ベースラ
 
 ## Features (v0.1)
 - Bernoulli K-armed environment
-- Epsilon-Greedy, UCB1, Thompson Sampling (Bernoulli), EXP3 (adversarial)
+- Epsilon-Greedy, Softmax, UCB1, Thompson Sampling (Bernoulli), EXP3 (adversarial), Gradient Bandit
 - Deterministic experiment runner + plots
 - Simple logging (CSV) for regret/reward
 - Ready for GitHub Actions + pytest
