@@ -4,6 +4,8 @@ import argparse, numpy as np, matplotlib.pyplot as plt, pathlib
 from bandit_playground.envs.bernoulli import BernoulliKArms
 from bandit_playground.algorithms.epsilon_greedy import EpsilonGreedy
 from bandit_playground.algorithms.ucb1 import UCB1
+from bandit_playground.algorithms.ucb_tuned import UCBTuned
+from bandit_playground.algorithms.kl_ucb import KLUCB
 from bandit_playground.algorithms.thompson_bernoulli import ThompsonBernoulli
 from bandit_playground.algorithms.exp3 import Exp3
 from bandit_playground.algorithms.softmax import Softmax
@@ -13,6 +15,8 @@ from bandit_playground.experiment import run_bandit
 ALGOS = {
     "eps": EpsilonGreedy,
     "ucb1": UCB1,
+    "ucbt": UCBTuned,
+    "klucb": KLUCB,
     "ts": ThompsonBernoulli,
     "exp3": Exp3,
     "softmax": Softmax,
