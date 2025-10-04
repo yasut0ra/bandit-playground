@@ -1,6 +1,7 @@
 import numpy as np
 from bandit_playground.envs.bernoulli import BernoulliKArms
 from bandit_playground.envs.linear import LinearBanditEnv
+from bandit_playground.envs.ranking import CascadeClickEnv
 
 def test_bernoulli_shapes():
     probs = np.array([0.1, 0.5, 0.9])
@@ -19,3 +20,15 @@ def test_linear_env_shapes():
     reward = env.pull(0)
     assert isinstance(reward, float)
     assert env.optimal_arm in (0, 1)
+
+
+def test_ranking_env_clicks():
+    probs = np.array([0.3, 0.6, 0.1])
+    env = CascadeClickEnv(probs, list_size=2, seed=1)
+    ranking = [1, 0]
+    click_index, reward = env.step(ranking)
+    assert click_index in (0, 1, None)
+    assert reward in (0.0, 1.0)
+    expected = env.expected_click_prob(ranking)
+    assert 0.0 <= expected <= 1.0
+    assert env.optimal_ranking[0] == 1
