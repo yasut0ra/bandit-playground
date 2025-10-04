@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "bandit-playground"
+version = "0.1.0"
+description = "Reproducible sandbox for multi-armed and learning-to-rank bandit experiments."
+authors = [{name = "You", email = "you@example.com"}]
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+  "numpy>=1.24",
+  "matplotlib>=3.7",
+]
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
