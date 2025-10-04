@@ -3,8 +3,8 @@
 Reproducible sandbox for classic and contextual bandit experiments (ベースラインからランキング系まで拡張可能).
 
 ## Features (v0.1)
-- Bernoulli K-armed, Linear contextual, and Cascade ranking environments
-- Epsilon-Greedy, Softmax, UCB1, UCB-Tuned, KL-UCB, Thompson Sampling (Bernoulli), LinUCB, LinTS, CascadeUCB1, CascadeThompson, EXP3 (adversarial), Gradient Bandit
+- Bernoulli K-armed, Linear contextual, Cascade ranking, and PBM ranking environments
+- Epsilon-Greedy, Softmax, UCB1, UCB-Tuned, KL-UCB, Thompson Sampling (Bernoulli), LinUCB, LinTS, CascadeUCB1, CascadeThompson, PBMUCB1, PBMThompson, EXP3 (adversarial), Gradient Bandit
 - Deterministic experiment runner + plots
 - Simple logging (CSV) for regret/reward
 - Ready for GitHub Actions + pytest
@@ -25,6 +25,9 @@ python scripts/run_linear.py --algo linucb --n-arms 5 --dim 4 --steps 5000 --see
 
 # Run a cascade ranking bandit experiment
 python scripts/run_cascade.py --algo ucb --n-items 10 --list-size 5 --steps 10000 --seed 0
+
+# Run a PBM ranking bandit experiment
+python scripts/run_pbm.py --algo ucb --n-items 15 --list-size 5 --steps 15000 --seed 0
 ```
 
 This will emit a CSV under `runs/` and a plot `runs/plot.png`.
@@ -46,7 +49,7 @@ bandit-playground/
 │  ├─ algorithms/{base.py,contextual_base.py,ranking_base.py,linear.py,ranking_cascade.py,...}
 │  ├─ envs/{bernoulli.py,linear.py,ranking.py}
 │  └─ experiment.py
-├─ scripts/{run_bernoulli.py,run_linear.py,run_cascade.py}
+├─ scripts/{run_bernoulli.py,run_linear.py,run_cascade.py,run_pbm.py}
 ├─ tests/{test_envs.py,test_algorithms.py,test_linear_algorithms.py,test_ranking_algorithms.py}
 └─ runs/ (created at runtime)
 ```
