@@ -4,13 +4,23 @@ import argparse, numpy as np, matplotlib.pyplot as plt, pathlib
 from bandit_playground.envs.bernoulli import BernoulliKArms
 from bandit_playground.algorithms.epsilon_greedy import EpsilonGreedy
 from bandit_playground.algorithms.ucb1 import UCB1
+from bandit_playground.algorithms.ucb_tuned import UCBTuned
+from bandit_playground.algorithms.kl_ucb import KLUCB
 from bandit_playground.algorithms.thompson_bernoulli import ThompsonBernoulli
+from bandit_playground.algorithms.exp3 import Exp3
+from bandit_playground.algorithms.softmax import Softmax
+from bandit_playground.algorithms.gradient_bandit import GradientBandit
 from bandit_playground.experiment import run_bandit
 
 ALGOS = {
     "eps": EpsilonGreedy,
     "ucb1": UCB1,
+    "ucbt": UCBTuned,
+    "klucb": KLUCB,
     "ts": ThompsonBernoulli,
+    "exp3": Exp3,
+    "softmax": Softmax,
+    "grad": GradientBandit,
 }
 
 def main():
@@ -20,6 +30,10 @@ def main():
     ap.add_argument("--steps", type=int, default=10000)
     ap.add_argument("--seed", type=int, default=42)
     ap.add_argument("--epsilon", type=float, default=0.1, help="for eps-greedy")
+    ap.add_argument("--gamma", type=float, default=0.07, help="for EXP3")
+    ap.add_argument("--tau", type=float, default=0.1, help="for softmax exploration")
+    ap.add_argument("--alpha", type=float, default=0.1, help="for gradient bandit")
+    ap.add_argument("--no-baseline", action="store_true", help="disable baseline in gradient bandit")
     ap.add_argument("--out", type=str, default="runs")
     args = ap.parse_args()
 
@@ -33,6 +47,17 @@ def main():
     env = BernoulliKArms(probs, seed=args.seed)
     if args.algo == "eps":
         algo = EpsilonGreedy(env.n_arms, epsilon=args.epsilon, seed=args.seed)
+    elif args.algo == "exp3":
+        algo = Exp3(env.n_arms, gamma=args.gamma, seed=args.seed)
+    elif args.algo == "softmax":
+        algo = Softmax(env.n_arms, tau=args.tau, seed=args.seed)
+    elif args.algo == "grad":
+        algo = GradientBandit(
+            env.n_arms,
+            alpha=args.alpha,
+            use_baseline=not args.no_baseline,
+            seed=args.seed,
+        )
     else:
         algo = ALGOS[args.algo](env.n_arms, seed=args.seed)
 
