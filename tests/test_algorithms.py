@@ -1,6 +1,8 @@
 import numpy as np
 from bandit_playground.envs.bernoulli import BernoulliKArms
 from bandit_playground.algorithms.ucb1 import UCB1
+from bandit_playground.algorithms.ucb_tuned import UCBTuned
+from bandit_playground.algorithms.kl_ucb import KLUCB
 from bandit_playground.algorithms.epsilon_greedy import EpsilonGreedy
 from bandit_playground.algorithms.thompson_bernoulli import ThompsonBernoulli
 from bandit_playground.algorithms.exp3 import Exp3
@@ -13,6 +15,8 @@ def test_algorithms_basic():
     env = BernoulliKArms(probs, seed=0)
     algos = (
         (UCB1, {"seed": 0}, 600),
+        (UCBTuned, {"seed": 0}, 600),
+        (KLUCB, {"seed": 0}, 600),
         (EpsilonGreedy, {"epsilon": 0.1, "seed": 0}, 600),
         (ThompsonBernoulli, {"seed": 0}, 600),
         (Exp3, {"gamma": 0.05, "seed": 0}, 900),
