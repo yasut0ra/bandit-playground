@@ -72,10 +72,10 @@ def run_ranking_bandit(
     for t in range(steps):
         _ = rng  # maintain parity with other runners
         ranking = algo.select_ranking()
-        click_index, reward = env.step(ranking)
-        algo.update(ranking, click_index)
+        feedback, reward = env.step(ranking)
+        algo.update(ranking, feedback)
         rewards[t] = reward
-        regrets[t] = env.optimal_click_prob - env.expected_click_prob(ranking)
+        regrets[t] = env.optimal_reward - env.expected_reward(ranking)
 
     out = _write_metrics(rewards, regrets, out_dir) if out_dir else None
     return rewards, regrets, out
