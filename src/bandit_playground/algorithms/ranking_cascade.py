@@ -82,6 +82,49 @@ class CascadeThompson(RankingBanditAlgo):
                 break
 
 
+class CascadeEpsilonGreedy(RankingBanditAlgo):
+    """Epsilon-greedy cascade learner using per-item click estimates."""
+
+    def __init__(
+        self,
+        n_items: int,
+        list_size: int,
+        epsilon: float = 0.1,
+        seed: int | None = None,
+    ) -> None:
+        super().__init__(n_items, list_size, seed)
+        if not (0.0 <= epsilon <= 1.0):
+            raise ValueError("epsilon must be in [0, 1]")
+        self.epsilon = float(epsilon)
+        self.counts = np.zeros(n_items, dtype=float)
+        self.successes = np.zeros(n_items, dtype=float)
+
+    def _estimates(self) -> np.ndarray:
+        counts = np.maximum(self.counts, 1.0)
+        return self.successes / counts
+
+    def select_ranking(self) -> list[int]:
+        if self.rng.random() < self.epsilon:
+            ranking = self.rng.choice(self.n_items, size=self.list_size, replace=False)
+            return ranking.tolist()
+        estimates = self._estimates()
+        # add small perturbation to break ties stably
+        noise = self.rng.normal(0.0, 1e-6, size=self.n_items)
+        scores = estimates + noise
+        ranking = np.argsort(-scores)[: self.list_size]
+        return ranking.tolist()
+
+    def update(self, ranking: list[int], feedback) -> None:
+        click_index = feedback
+        for pos, item in enumerate(ranking):
+            self.counts[item] += 1.0
+            if click_index is not None and pos == click_index:
+                self.successes[item] += 1.0
+                break
+            if click_index is not None and pos > click_index:
+                break
+
+
 class CascadeKLUCB(RankingBanditAlgo):
     """Cascade-style KL-UCB (complements CascadeUCB1 with tighter confidence sets)."""
 
