@@ -105,3 +105,63 @@ class PBMThompson(RankingBanditAlgo):
             self.mean[item] += delta / self.counts[item]
             delta2 = iw - self.mean[item]
             self.m2[item] += delta * delta2
+
+
+class PBMSoftmax(RankingBanditAlgo):
+    """Boltzmann exploration for PBM using importance-weighted click estimates."""
+
+    def __init__(
+        self,
+        n_items: int,
+        list_size: int,
+        exam_prob: np.ndarray,
+        tau: float = 0.2,
+        seed: int | None = None,
+    ) -> None:
+        super().__init__(n_items, list_size, seed)
+        if tau <= 0.0:
+            raise ValueError("tau must be positive")
+        exam_prob = np.asarray(exam_prob, dtype=float)
+        if exam_prob.shape != (list_size,):
+            raise ValueError("exam_prob must have shape (list_size,)")
+        if np.any(exam_prob <= 0.0) or np.any(exam_prob > 1.0):
+            raise ValueError("exam_prob must lie in (0, 1]")
+        self.exam_prob = exam_prob
+        self.tau = float(tau)
+        self.counts = np.zeros(n_items, dtype=float)
+        self.estimates = np.zeros(n_items, dtype=float)
+
+    def _probs(self, available: list[int]) -> np.ndarray:
+        arr = np.asarray(available, dtype=int)
+        if arr.size == 0:
+            return np.array([], dtype=float)
+        scaled = self.estimates[arr] / self.tau
+        scaled -= np.max(scaled)
+        probs = np.exp(scaled)
+        total = probs.sum()
+        if total <= 0.0 or not np.isfinite(total):
+            probs = np.full(arr.size, 1.0 / arr.size, dtype=float)
+        else:
+            probs /= total
+        return probs
+
+    def select_ranking(self) -> list[int]:
+        available = list(range(self.n_items))
+        ranking: list[int] = []
+        for _ in range(self.list_size):
+            if not available:
+                break
+            probs = self._probs(available)
+            idx = int(self.rng.choice(len(available), p=probs))
+            ranking.append(available.pop(idx))
+        return ranking
+
+    def update(self, ranking: list[int], feedback) -> None:
+        clicks = np.asarray(feedback, dtype=float)
+        if clicks.shape != (self.list_size,):
+            raise ValueError("feedback must be array-like with length equal to list_size")
+        for pos, item in enumerate(ranking):
+            iw = clicks[pos] / self.exam_prob[pos]
+            self.counts[item] += 1.0
+            n = self.counts[item]
+            self.estimates[item] += (iw - self.estimates[item]) / n

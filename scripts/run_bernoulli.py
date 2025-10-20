@@ -6,6 +6,7 @@ from bandit_playground.algorithms.epsilon_greedy import EpsilonGreedy
 from bandit_playground.algorithms.ucb1 import UCB1
 from bandit_playground.algorithms.ucb_tuned import UCBTuned
 from bandit_playground.algorithms.kl_ucb import KLUCB
+from bandit_playground.algorithms.moss import MOSS
 from bandit_playground.algorithms.thompson_bernoulli import ThompsonBernoulli
 from bandit_playground.algorithms.exp3 import Exp3
 from bandit_playground.algorithms.softmax import Softmax
@@ -21,6 +22,7 @@ ALGOS = {
     "exp3": Exp3,
     "softmax": Softmax,
     "grad": GradientBandit,
+    "moss": MOSS,
 }
 
 def main():
@@ -34,6 +36,7 @@ def main():
     ap.add_argument("--tau", type=float, default=0.1, help="for softmax exploration")
     ap.add_argument("--alpha", type=float, default=0.1, help="for gradient bandit")
     ap.add_argument("--no-baseline", action="store_true", help="disable baseline in gradient bandit")
+    ap.add_argument("--horizon", type=int, default=None, help="for MOSS (defaults to steps)")
     ap.add_argument("--out", type=str, default="runs")
     args = ap.parse_args()
 
@@ -58,10 +61,14 @@ def main():
             use_baseline=not args.no_baseline,
             seed=args.seed,
         )
+    elif args.algo == "moss":
+        horizon = args.horizon if args.horizon is not None else args.steps
+        algo = MOSS(env.n_arms, horizon=horizon, seed=args.seed)
     else:
         algo = ALGOS[args.algo](env.n_arms, seed=args.seed)
 
-    _, _, out_dir = run_bandit(env, algo, args.steps, seed=args.seed, out_dir=args.out)
+    result = run_bandit(env, algo, args.steps, seed=args.seed, out_dir=args.out)
+    out_dir = result.logdir
 
     # Plot cumulative regret
     import csv
@@ -70,7 +77,7 @@ def main():
         reader = csv.DictReader(f)
         for row in reader:
             ts.append(int(row["t"]))
-            cum_regret.append(float(row["cum_regret"]))
+            cum_regret.append(float(row["cum_pseudo_regret"]))
 
     plt.figure()
     plt.plot(ts, cum_regret, label=f"{args.algo}")
