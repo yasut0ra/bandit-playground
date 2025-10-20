@@ -4,7 +4,7 @@ Reproducible sandbox for classic and contextual bandit experiments (ベースラ
 
 ## Features (v0.1)
 - Bernoulli K-armed, Linear contextual, Cascade ranking, and PBM ranking environments
-- Epsilon-Greedy, Softmax, UCB1, UCB-Tuned, KL-UCB, Thompson Sampling (Bernoulli), LinUCB, LinTS, CascadeUCB1, CascadeThompson, PBMUCB1, PBMThompson, EXP3 (adversarial), Gradient Bandit
+- Epsilon-Greedy, Softmax, UCB1, UCB-Tuned, KL-UCB, Thompson Sampling (Bernoulli), MOSS, LinUCB, LinTS, OFUL, CascadeUCB1, CascadeKLUCB, CascadeThompson, PBMUCB1, PBMThompson, EXP3 (adversarial), Gradient Bandit
 - Deterministic experiment runner + plots
 - Simple logging (CSV) for regret/reward
 - Ready for GitHub Actions + pytest
