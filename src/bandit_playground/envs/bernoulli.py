@@ -11,6 +11,9 @@ class BernoulliKArms:
     def pull(self, arm: int) -> float:
         return float(self.rng.random() < self.probs[arm])
 
+    def expected_reward(self, arm: int) -> float:
+        return float(self.probs[arm])
+
     @property
     def optimal_arm(self) -> int:
         return int(np.argmax(self.probs))
@@ -18,3 +21,7 @@ class BernoulliKArms:
     @property
     def optimal_p(self) -> float:
         return float(np.max(self.probs))
+
+    @property
+    def optimal_reward(self) -> float:
+        return self.optimal_p
