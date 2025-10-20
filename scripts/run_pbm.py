@@ -2,13 +2,14 @@
 from __future__ import annotations
 import argparse, numpy as np, pathlib
 from bandit_playground.envs.ranking import PositionBasedClickEnv
-from bandit_playground.algorithms.ranking_pbm import PBMUCB1, PBMThompson
+from bandit_playground.algorithms.ranking_pbm import PBMUCB1, PBMThompson, PBMSoftmax
 from bandit_playground.experiment import run_ranking_bandit
 
 
 ALGOS = {
     "ucb": PBMUCB1,
     "ts": PBMThompson,
+    "softmax": PBMSoftmax,
 }
 
 
@@ -23,6 +24,7 @@ def main():
     ap.add_argument("--prior-mean", type=float, default=0.5)
     ap.add_argument("--prior-var", type=float, default=1.0)
     ap.add_argument("--noise-scale", type=float, default=1.0)
+    ap.add_argument("--softmax-tau", type=float, default=0.2, help="temperature for PBM softmax")
     ap.add_argument("--out", type=str, default="runs_pbm")
     args = ap.parse_args()
 
@@ -40,7 +42,7 @@ def main():
             alpha=args.alpha,
             seed=args.seed,
         )
-    else:
+    elif args.algo == "ts":
         algo = PBMThompson(
             args.n_items,
             args.list_size,
@@ -50,8 +52,17 @@ def main():
             noise_scale=args.noise_scale,
             seed=args.seed,
         )
+    else:
+        algo = PBMSoftmax(
+            args.n_items,
+            args.list_size,
+            exam_prob=exam,
+            tau=args.softmax_tau,
+            seed=args.seed,
+        )
 
-    _, _, out_dir = run_ranking_bandit(env, algo, args.steps, seed=args.seed, out_dir=args.out)
+    result = run_ranking_bandit(env, algo, args.steps, seed=args.seed, out_dir=args.out)
+    out_dir = result.logdir
 
     metrics_path = pathlib.Path(out_dir) / "metrics.csv"
     print(f"Saved PBM bandit metrics to: {metrics_path}")
