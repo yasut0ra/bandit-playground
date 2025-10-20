@@ -4,7 +4,7 @@ Reproducible sandbox for classic and contextual bandit experiments (ベースラ
 
 ## Features (v0.1)
 - Bernoulli K-armed, Linear contextual, Cascade ranking, and PBM ranking environments
-- Epsilon-Greedy, Softmax, UCB1, UCB-Tuned, KL-UCB, Thompson Sampling (Bernoulli), MOSS, LinUCB, LinTS, OFUL, CascadeUCB1, CascadeKLUCB, CascadeThompson, PBMUCB1, PBMThompson, EXP3 (adversarial), Gradient Bandit
+- Epsilon-Greedy, Softmax, UCB1, UCB-Tuned, KL-UCB, Thompson Sampling (Bernoulli), MOSS, LinUCB, LinTS, OFUL, CascadeUCB1, CascadeKLUCB, CascadeThompson, CascadeEpsilonGreedy, PBMUCB1, PBMThompson, PBMSoftmax, EXP3 (adversarial), Gradient Bandit
 - Deterministic experiment runner + plots
 - Simple logging (CSV) for regret/reward
 - Ready for GitHub Actions + pytest
@@ -31,6 +31,11 @@ python scripts/run_pbm.py --algo ucb --n-items 15 --list-size 5 --steps 15000 --
 ```
 
 This will emit a CSV under `runs/` and a plot `runs/plot.png`.
+
+## Regret conventions
+- Logged `pseudo_regret` uses the standard expected-reward gap (contextual: conditional on contexts, ranking: expected clicks under the model).
+- `instant_regret` records the realised gap between the optimal expected reward and the observed reward for that step.
+- CSV files report both cumulative curves (`cum_pseudo_regret`, `cum_instant_regret`) so plots can target either notion.
 
 ## Roadmap
 - [x] Contextual Linear Bandits (LinUCB / LinTS)
