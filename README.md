@@ -4,7 +4,7 @@ Reproducible sandbox for classic and contextual bandit experiments (ベースラ
 
 ## Features (v0.1)
 - Bernoulli K-armed, Linear contextual, Cascade ranking, and PBM ranking environments
-- Epsilon-Greedy, Softmax, UCB1, UCB-Tuned, KL-UCB, Thompson Sampling (Bernoulli), MOSS, LinUCB, LinTS, OFUL, CascadeUCB1, CascadeKLUCB, CascadeThompson, CascadeEpsilonGreedy, PBMUCB1, PBMThompson, PBMSoftmax, EXP3 (adversarial), Gradient Bandit
+- Epsilon-Greedy, Softmax, UCB1, UCB-Tuned, KL-UCB, Thompson Sampling (Bernoulli), MOSS, LinUCB, LinTS, OFUL, CascadeUCB1, CascadeKLUCB, CascadeThompson, CascadeEpsilonGreedy, TopRank, UniRank, PBMUCB1, PBMThompson, PBMSoftmax, EXP3 (adversarial), Gradient Bandit
 - Deterministic experiment runner + plots
 - Simple logging (CSV) for regret/reward
 - Ready for GitHub Actions + pytest
@@ -25,6 +25,9 @@ python scripts/run_linear.py --algo linucb --n-arms 5 --dim 4 --steps 5000 --see
 
 # Run a cascade ranking bandit experiment
 python scripts/run_cascade.py --algo ucb --n-items 10 --list-size 5 --steps 10000 --seed 0
+
+# Run a general-model ranking bandit (TopRank over cascade feedback)
+python scripts/run_cascade.py --algo toprank --n-items 10 --list-size 5 --steps 10000 --seed 0
 
 # Run a PBM ranking bandit experiment
 python scripts/run_pbm.py --algo ucb --n-items 15 --list-size 5 --steps 15000 --seed 0
