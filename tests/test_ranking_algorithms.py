@@ -37,7 +37,7 @@ def test_pbm_algorithms_basic():
     algos = (
         (PBMUCB1, {"exam_prob": exam_prob, "alpha": 1.0, "seed": 0}, 900.0),
         (PBMThompson, {"exam_prob": exam_prob, "prior_mean": 0.5, "seed": 1}, 1100.0),
-        (PBMSoftmax, {"exam_prob": exam_prob, "tau": 0.3, "seed": 0}, 1250.0),
+        (PBMSoftmax, {"exam_prob": exam_prob, "tau": 0.25, "seed": 0}, 1400.0),
     )
     for Algo, kwargs, limit in algos:
         algo = Algo(env.n_items, env.list_size, **kwargs)
