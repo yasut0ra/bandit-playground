@@ -1,6 +1,6 @@
 import numpy as np
 from bandit_playground.envs.linear import LinearBanditEnv
-from bandit_playground.algorithms.linear import LinUCB, LinThompson
+from bandit_playground.algorithms.linear import LinUCB, LinThompson, OFUL
 from bandit_playground.experiment import run_contextual_bandit
 
 
@@ -13,9 +13,22 @@ def test_linear_algorithms_basic():
         ]
     )
     steps = 1500
+    theta_bound = float(np.linalg.norm(weights, axis=1).max())
     algos = (
         (LinUCB, {"alpha": 0.6, "seed": 0}, 220.0),
         (LinThompson, {"v": 0.2, "seed": 0}, 260.0),
+        (
+            OFUL,
+            {
+                "lambda_": 1.0,
+                "delta": 0.05,
+                "context_bound": 6.0,
+                "theta_bound": theta_bound,
+                "noise_scale": 0.1,
+                "seed": 0,
+            },
+            300.0,
+        ),
     )
     for Algo, kwargs, limit in algos:
         env = LinearBanditEnv(weights, noise_std=0.05, seed=0)
