@@ -56,7 +56,8 @@ def main():
             seed=args.seed,
         )
 
-    _, _, out_dir = run_contextual_bandit(env, algo, args.steps, seed=args.seed, out_dir=args.out)
+    result = run_contextual_bandit(env, algo, args.steps, seed=args.seed, out_dir=args.out)
+    out_dir = result.logdir
 
     # simple aggregate stats
     metrics_path = pathlib.Path(out_dir) / "metrics.csv"
