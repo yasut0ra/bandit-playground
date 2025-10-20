@@ -10,3 +10,7 @@ dist/
 .venv
 .ipynb_checkpoints/
 .DS_Store
+run/
+runs/
+.pytest_cache/
+uv.lock
