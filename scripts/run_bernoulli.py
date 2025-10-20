@@ -67,7 +67,8 @@ def main():
     else:
         algo = ALGOS[args.algo](env.n_arms, seed=args.seed)
 
-    _, _, out_dir = run_bandit(env, algo, args.steps, seed=args.seed, out_dir=args.out)
+    result = run_bandit(env, algo, args.steps, seed=args.seed, out_dir=args.out)
+    out_dir = result.logdir
 
     # Plot cumulative regret
     import csv
@@ -76,7 +77,7 @@ def main():
         reader = csv.DictReader(f)
         for row in reader:
             ts.append(int(row["t"]))
-            cum_regret.append(float(row["cum_regret"]))
+            cum_regret.append(float(row["cum_pseudo_regret"]))
 
     plt.figure()
     plt.plot(ts, cum_regret, label=f"{args.algo}")
