@@ -8,6 +8,7 @@ from bandit_playground.algorithms.ranking_cascade import (
     CascadeEpsilonGreedy,
     CascadeKLUCB,
 )
+from bandit_playground.algorithms.ranking_general import TopRank, UniRank
 from bandit_playground.experiment import run_ranking_bandit
 
 
@@ -16,6 +17,8 @@ ALGOS = {
     "ts": CascadeThompson,
     "eps": CascadeEpsilonGreedy,
     "klucb": CascadeKLUCB,
+    "toprank": TopRank,
+    "unirank": UniRank,
 }
 
 
@@ -33,6 +36,8 @@ def main():
     ap.add_argument("--kl-c", type=float, default=3.0, help="exploration constant for KL-UCB")
     ap.add_argument("--kl-tol", type=float, default=1e-6, help="binary search tolerance for KL-UCB")
     ap.add_argument("--kl-max-iter", type=int, default=25, help="binary search iterations for KL-UCB")
+    ap.add_argument("--toprank-confidence", type=float, default=1.5, help="confidence scaling for TopRank")
+    ap.add_argument("--unirank-alpha", type=float, default=1.0, help="UCB bonus weight for UniRank")
     ap.add_argument("--out", type=str, default="runs_cascade")
     args = ap.parse_args()
 
@@ -57,7 +62,7 @@ def main():
             epsilon=args.eps_epsilon,
             seed=args.seed,
         )
-    else:
+    elif args.algo == "klucb":
         algo = CascadeKLUCB(
             args.n_items,
             args.list_size,
@@ -66,6 +71,22 @@ def main():
             max_iter=args.kl_max_iter,
             seed=args.seed,
         )
+    elif args.algo == "toprank":
+        algo = TopRank(
+            args.n_items,
+            args.list_size,
+            confidence=args.toprank_confidence,
+            seed=args.seed,
+        )
+    elif args.algo == "unirank":
+        algo = UniRank(
+            args.n_items,
+            args.list_size,
+            alpha=args.unirank_alpha,
+            seed=args.seed,
+        )
+    else:
+        raise ValueError(f"Unknown algorithm choice: {args.algo}")
 
     result = run_ranking_bandit(env, algo, args.steps, seed=args.seed, out_dir=args.out)
     out_dir = result.logdir

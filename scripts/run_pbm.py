@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse, numpy as np, pathlib
 from bandit_playground.envs.ranking import PositionBasedClickEnv
 from bandit_playground.algorithms.ranking_pbm import PBMUCB1, PBMThompson, PBMSoftmax
+from bandit_playground.algorithms.ranking_general import TopRank, UniRank
 from bandit_playground.experiment import run_ranking_bandit
 
 
@@ -10,6 +11,8 @@ ALGOS = {
     "ucb": PBMUCB1,
     "ts": PBMThompson,
     "softmax": PBMSoftmax,
+    "toprank": TopRank,
+    "unirank": UniRank,
 }
 
 
@@ -25,6 +28,8 @@ def main():
     ap.add_argument("--prior-var", type=float, default=1.0)
     ap.add_argument("--noise-scale", type=float, default=1.0)
     ap.add_argument("--softmax-tau", type=float, default=0.2, help="temperature for PBM softmax")
+    ap.add_argument("--toprank-confidence", type=float, default=1.5, help="confidence scaling for TopRank")
+    ap.add_argument("--unirank-alpha", type=float, default=1.0, help="UCB bonus weight for UniRank")
     ap.add_argument("--out", type=str, default="runs_pbm")
     args = ap.parse_args()
 
@@ -52,7 +57,7 @@ def main():
             noise_scale=args.noise_scale,
             seed=args.seed,
         )
-    else:
+    elif args.algo == "softmax":
         algo = PBMSoftmax(
             args.n_items,
             args.list_size,
@@ -60,6 +65,22 @@ def main():
             tau=args.softmax_tau,
             seed=args.seed,
         )
+    elif args.algo == "toprank":
+        algo = TopRank(
+            args.n_items,
+            args.list_size,
+            confidence=args.toprank_confidence,
+            seed=args.seed,
+        )
+    elif args.algo == "unirank":
+        algo = UniRank(
+            args.n_items,
+            args.list_size,
+            alpha=args.unirank_alpha,
+            seed=args.seed,
+        )
+    else:
+        raise ValueError(f"Unknown algorithm choice: {args.algo}")
 
     result = run_ranking_bandit(env, algo, args.steps, seed=args.seed, out_dir=args.out)
     out_dir = result.logdir

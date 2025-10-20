@@ -7,6 +7,7 @@ from bandit_playground.algorithms.ranking_cascade import (
     CascadeKLUCB,
 )
 from bandit_playground.algorithms.ranking_pbm import PBMUCB1, PBMThompson, PBMSoftmax
+from bandit_playground.algorithms.ranking_general import TopRank, UniRank
 from bandit_playground.experiment import run_ranking_bandit
 
 
@@ -19,6 +20,8 @@ def test_cascade_algorithms_basic():
         (CascadeThompson, {"alpha_prior": 1.0, "beta_prior": 1.0, "seed": 0}, 1100.0),
         (CascadeKLUCB, {"c": 2.0, "seed": 0}, 950.0),
         (CascadeEpsilonGreedy, {"epsilon": 0.1, "seed": 0}, 1350.0),
+        (TopRank, {"confidence": 1.2, "seed": 0}, 1100.0),
+        (UniRank, {"alpha": 1.0, "seed": 0}, 1250.0),
     )
     for Algo, kwargs, limit in algos:
         algo = Algo(env.n_items, env.list_size, **kwargs)
@@ -38,6 +41,8 @@ def test_pbm_algorithms_basic():
         (PBMUCB1, {"exam_prob": exam_prob, "alpha": 1.0, "seed": 0}, 900.0),
         (PBMThompson, {"exam_prob": exam_prob, "prior_mean": 0.5, "seed": 1}, 1100.0),
         (PBMSoftmax, {"exam_prob": exam_prob, "tau": 0.25, "seed": 0}, 1400.0),
+        (TopRank, {"confidence": 1.5, "seed": 0}, 1600.0),
+        (UniRank, {"alpha": 1.2, "seed": 0}, 1500.0),
     )
     for Algo, kwargs, limit in algos:
         algo = Algo(env.n_items, env.list_size, **kwargs)
