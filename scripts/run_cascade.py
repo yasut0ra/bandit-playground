@@ -5,6 +5,7 @@ from bandit_playground.envs.ranking import CascadeClickEnv
 from bandit_playground.algorithms.ranking_cascade import (
     CascadeUCB1,
     CascadeThompson,
+    CascadeEpsilonGreedy,
     CascadeKLUCB,
 )
 from bandit_playground.experiment import run_ranking_bandit
@@ -13,6 +14,7 @@ from bandit_playground.experiment import run_ranking_bandit
 ALGOS = {
     "ucb": CascadeUCB1,
     "ts": CascadeThompson,
+    "eps": CascadeEpsilonGreedy,
     "klucb": CascadeKLUCB,
 }
 
@@ -27,6 +29,7 @@ def main():
     ap.add_argument("--alpha", type=float, default=1.5, help="UCB exploration strength")
     ap.add_argument("--ts-alpha", type=float, default=1.0, help="Thompson prior alpha")
     ap.add_argument("--ts-beta", type=float, default=1.0, help="Thompson prior beta")
+    ap.add_argument("--eps-epsilon", type=float, default=0.1, help="exploration rate for epsilon-greedy")
     ap.add_argument("--kl-c", type=float, default=3.0, help="exploration constant for KL-UCB")
     ap.add_argument("--kl-tol", type=float, default=1e-6, help="binary search tolerance for KL-UCB")
     ap.add_argument("--kl-max-iter", type=int, default=25, help="binary search iterations for KL-UCB")
@@ -47,6 +50,13 @@ def main():
             beta_prior=args.ts_beta,
             seed=args.seed,
         )
+    elif args.algo == "eps":
+        algo = CascadeEpsilonGreedy(
+            args.n_items,
+            args.list_size,
+            epsilon=args.eps_epsilon,
+            seed=args.seed,
+        )
     else:
         algo = CascadeKLUCB(
             args.n_items,
@@ -57,7 +67,8 @@ def main():
             seed=args.seed,
         )
 
-    _, _, out_dir = run_ranking_bandit(env, algo, args.steps, seed=args.seed, out_dir=args.out)
+    result = run_ranking_bandit(env, algo, args.steps, seed=args.seed, out_dir=args.out)
+    out_dir = result.logdir
 
     metrics_path = pathlib.Path(out_dir) / "metrics.csv"
     print(f"Saved cascade bandit metrics to: {metrics_path}")
