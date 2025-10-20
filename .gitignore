@@ -14,3 +14,5 @@ run/
 runs/
 .pytest_cache/
 uv.lock
+runs_cascade_eps_demo/
+runs_pbm_softmax_demo/
