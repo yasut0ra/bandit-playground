@@ -1,6 +1,10 @@
 import numpy as np
 from bandit_playground.envs.ranking import CascadeClickEnv, PositionBasedClickEnv
-from bandit_playground.algorithms.ranking_cascade import CascadeUCB1, CascadeThompson
+from bandit_playground.algorithms.ranking_cascade import (
+    CascadeUCB1,
+    CascadeThompson,
+    CascadeKLUCB,
+)
 from bandit_playground.algorithms.ranking_pbm import PBMUCB1, PBMThompson
 from bandit_playground.experiment import run_ranking_bandit
 
@@ -12,6 +16,7 @@ def test_cascade_algorithms_basic():
     algos = (
         (CascadeUCB1, {"alpha": 1.5, "seed": 0}, 900.0),
         (CascadeThompson, {"alpha_prior": 1.0, "beta_prior": 1.0, "seed": 0}, 1100.0),
+        (CascadeKLUCB, {"c": 2.0, "seed": 0}, 950.0),
     )
     for Algo, kwargs, limit in algos:
         algo = Algo(env.n_items, env.list_size, **kwargs)
