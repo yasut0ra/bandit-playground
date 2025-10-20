@@ -33,7 +33,8 @@ def test_linear_algorithms_basic():
     for Algo, kwargs, limit in algos:
         env = LinearBanditEnv(weights, noise_std=0.05, seed=0)
         algo = Algo(weights.shape[0], weights.shape[1], **kwargs)
-        rewards, regrets, _ = run_contextual_bandit(env, algo, steps=steps, seed=1)
-        assert rewards.shape == (steps,)
-        assert regrets.shape == (steps,)
-        assert regrets.sum() < limit
+        result = run_contextual_bandit(env, algo, steps=steps, seed=1)
+        assert result.rewards.shape == (steps,)
+        assert result.pseudo_regret.shape == (steps,)
+        assert result.instant_regret.shape == (steps,)
+        assert result.pseudo_regret.sum() < limit
