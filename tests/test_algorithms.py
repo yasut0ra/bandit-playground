@@ -27,7 +27,8 @@ def test_algorithms_basic():
     )
     for Algo, kwargs, limit in algos:
         algo = Algo(env.n_arms, **kwargs)
-        rewards, regrets, _ = run_bandit(env, algo, steps=2000, seed=0)
-        assert rewards.shape == (2000,)
-        assert regrets.shape == (2000,)
-        assert regrets.sum() < limit
+        result = run_bandit(env, algo, steps=2000, seed=0)
+        assert result.rewards.shape == (2000,)
+        assert result.pseudo_regret.shape == (2000,)
+        assert result.instant_regret.shape == (2000,)
+        assert result.pseudo_regret.sum() < limit
